@@ -1,0 +1,7 @@
+# daterange_inclusive extension
+comment = 'daterange with inclusive upper bound'
+default_version = '1.0'
+module_pathname = '$libdir/daterange_inclusive'
+relocatable = true
+trusted = true
+

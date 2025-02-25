@@ -1,0 +1,50 @@
+CREATE EXTENSION daterange_inclusive;
+SELECT daterange_inclusive('2024-01-01' , '2024-06-01', '[]');
+   daterange_inclusive   
+-------------------------
+ [01-01-2024,06-01-2024]
+(1 row)
+
+SELECT daterange_inclusive('2024-01-01' , '2024-06-01', '[)');
+   daterange_inclusive   
+-------------------------
+ [01-01-2024,05-31-2024]
+(1 row)
+
+SELECT '[2025-01-01,2025-02-02]'::daterange::daterange_inclusive;
+   daterange_inclusive   
+-------------------------
+ [01-01-2025,02-02-2025]
+(1 row)
+
+SELECT '[2025-01-01,2025-02-02)'::daterange::daterange_inclusive;
+   daterange_inclusive   
+-------------------------
+ [01-01-2025,02-01-2025]
+(1 row)
+
+SELECT '[2025-01-01,2025-02-02]'::daterange_inclusive::daterange;
+        daterange        
+-------------------------
+ [01-01-2025,02-03-2025)
+(1 row)
+
+SELECT '[2025-01-01,2025-02-02)'::daterange_inclusive::daterange;
+        daterange        
+-------------------------
+ [01-01-2025,02-02-2025)
+(1 row)
+
+CREATE TABLE x (y daterange_inclusive);
+INSERT INTO x SELECT daterange_inclusive(d::date, (d + '1month'::interval)::date, '[]') FROM generate_series('2015-01-01'::date,'2025-02-02', '1day') d;
+INSERT INTO x SELECT daterange_inclusive(d::date, NULL::date, '[)') FROM generate_series('2015-01-01'::date,'2025-02-02', '1day') d;
+SELECT COUNT(*) FROM x;
+ count 
+-------
+  7372
+(1 row)
+
+CREATE INDEX ON x USING gist (y);
+INSERT INTO x SELECT '[2024-01-01,)'::daterange::daterange_inclusive;
+DROP EXTENSION daterange_inclusive CASCADE;
+NOTICE:  drop cascades to column y of table x

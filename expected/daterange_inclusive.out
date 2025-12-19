@@ -1,4 +1,16 @@
 CREATE EXTENSION daterange_inclusive;
+SELECT daterange_inclusive('2024-01-01' , '2024-01-02', '()');
+ daterange_inclusive 
+---------------------
+ empty
+(1 row)
+
+SELECT '[2015-02-01,2021-09-28]'::daterange_inclusive + '[2021-09-29,)'::daterange_inclusive;
+   ?column?    
+---------------
+ [02-01-2015,)
+(1 row)
+
 SELECT daterange_inclusive('2024-01-01' , '2024-06-01', '[]');
    daterange_inclusive   
 -------------------------

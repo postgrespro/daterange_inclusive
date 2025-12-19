@@ -41,18 +41,21 @@ daterange_inclusive_canonical(PG_FUNCTION_ARGS)
 	if (!upper.infinite && !DATE_NOT_FINITE(DatumGetDateADT(upper.val)) &&
 		!upper.inclusive)
 	{
-		DateADT		bnd = DatumGetDateADT(upper.val);
+		empty = (upper.val == lower.val);
+		if (!empty) {
+			DateADT		bnd = DatumGetDateADT(upper.val);
 
-		bnd--;
-		if (unlikely(!IS_VALID_DATE(bnd)))
-			ereturn(escontext, (Datum) 0,
-					(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
-					 errmsg("date out of range")));
-		upper.val = DateADTGetDatum(bnd);
-		upper.inclusive = true;
+			bnd--;
+			if (unlikely(!IS_VALID_DATE(bnd)))
+				ereturn(escontext, (Datum) 0,
+						(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
+						 errmsg("date out of range")));
+			upper.val = DateADTGetDatum(bnd);
+			upper.inclusive = true;
+		}
 	}
 
 	PG_RETURN_RANGE_P(range_serialize(typcache, &lower, &upper,
-									  false, escontext));
+									  empty, escontext));
 }
 

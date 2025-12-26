@@ -1,5 +1,5 @@
 # daterange_inclusive
-A PostgreSQL datarange type with inclusive upper bound
+A PostgreSQL daterange type with inclusive upper bound
 
 The daterange type, as well as other range types, is by default output with non-exclusive upper range. 
 This extension defines a type which is the same but with inclusive upper range.
